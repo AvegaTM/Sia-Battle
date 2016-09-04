@@ -1,0 +1,315 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Sia Battle</title>
+		<script> 
+/*
+*
+*/
+function getField(field) {
+  var str = '';
+  for (var i = 0; i < 100; i++) {
+    str += field[i];
+    str += (((i + 1) % 10) !== 0) ? " " : "\n";
+  }
+  return str;
+}
+//alert(getField(fld)); //var_dump
+
+/*
+*
+*/
+function getPoint(cx, cy) {
+  return fld[cx + cy * 10];
+}
+
+/* 1 2 3
+*  4 0 6
+*  7 8 9
+*/
+function testPoint(p) {
+  var x = p % 10,
+    y = Math.floor(p / 10);
+  if (getPoint(x, y) === 0) {
+    //1
+    var nx = x - 1,
+      ny = y - 1;
+    if ((nx > 0) && (ny > 0)) {
+      if (getPoint(nx, ny) !== 0)
+        return false;
+    }
+    //2
+    nx = x;
+    ny = y - 1;
+    if ((nx > 0) && (ny > 0)) {
+      if (getPoint(nx, ny) !== 0)
+        return false;
+    }
+    //3
+    nx = x + 1;
+    ny = y - 1;
+    if ((nx < 10) && (ny > 0)) {
+      if (getPoint(nx, ny) !== 0)
+        return false;
+    }
+    //4
+    nx = x - 1;
+    ny = y;
+    if ((nx > 0) && (ny > 0)) {
+      if (getPoint(nx, ny) !== 0)
+        return false;
+    }
+    //6
+    nx = x + 1;
+    ny = y;
+    if ((nx < 10) && (ny > 0)) {
+      if (getPoint(nx, ny) !== 0)
+        return false;
+    }
+    //7
+    nx = x - 1;
+    ny = y + 1;
+    if ((nx > 0) && (ny < 10)) {
+      if (getPoint(nx, ny) !== 0)
+        return false;
+    }
+    //8
+    nx = x;
+    ny = y + 1;
+    if ((nx > 0) && (ny < 10)) {
+      if (getPoint(nx, ny) !== 0)
+        return false;
+    }
+    //9
+    nx = x + 1;
+    ny = y + 1;
+    if ((nx < 10) && (ny < 10)) {
+      if (getPoint(nx, ny) !== 0)
+        return false;
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/*
+*
+*/
+function setPoint(cx, cy, cs) {
+  fld[cx + cy * 10] = cs;
+}
+
+/*
+*
+*/
+function setKorabl(kor) {
+  var x = 0,
+    y = 0;
+  for (var i = 0; i < kor.length; i++) {
+    x = kor[i] % 10;
+    y = Math.floor(kor[i] / 10);
+    setPoint(x, y, 1);
+  }
+  return true;
+}
+
+/*
+*
+*/
+function testKorabl(kor) {
+  for (var i = 0; i < kor.length; i++) {
+    if (testPoint(kor[i])) { // Ok.
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+/*  12
+*  9  3
+*    6
+*/
+function createKorabl(plb) {
+  var x = 0,
+    y = 0,
+    rnd = 0,
+    angle = 0,
+    bln = true;
+  while (bln) {
+    var kor = [];
+    rnd = Math.floor(Math.random() * 100);
+    x = rnd % 10;
+    y = Math.floor(rnd / 10);
+    if (plb > 1) {
+      angle = Math.floor(Math.random() * 4);
+      var xn = 0,
+        yn = 0;
+      switch (angle) {
+        case 0:
+          {
+            //12
+            if (y >= plb) {
+              for (var i = 0; i < plb; i++) {
+                yn = y - i;
+                kor.push(x + yn * 10);
+              }
+            } else {
+              //6
+              for (i = 0; i < plb; i++) {
+                yn = y + i;
+                kor.push(x + yn * 10);
+              }
+            }
+            break;
+          }
+        case 1:
+          {
+            //3
+            if (10 - x >= plb) {
+              for (i = 0; i < plb; i++) {
+                xn = x + i;
+                kor.push(xn + y * 10);
+              }
+            } else {
+              //9
+              for (i = 0; i < plb; i++) {
+                xn = x - i;
+                kor.push(xn + y * 10);
+              }
+            }
+            break;
+          }
+        case 2:
+          {
+            //6
+            if (10 - y >= plb) {
+              for (i = 0; i < plb; i++) {
+                yn = y + i;
+                kor.push(x + yn * 10);
+              }
+            } else {
+              //12
+              for (i = 0; i < plb; i++) {
+                yn = y - i;
+                kor.push(x + yn * 10);
+              }
+            }
+            break;
+          }
+        case 3:
+          {
+            //9
+            if (x >= plb) {
+              for (i = 0; i < plb; i++) {
+                xn = x - i;
+                kor.push(xn + y * 10);
+              }
+            } else {
+              //3
+              for (i = 0; i < plb; i++) {
+                xn = x + i;
+                kor.push(xn + y * 10);
+              }
+            }
+            break;
+          }
+        default:
+          alert("Быть не может!!!");
+      }
+    } else
+      kor.push(x + y * 10);
+    if (testKorabl(kor))
+      bln = !setKorabl(kor);
+  }
+  return kor;
+}
+
+/* —= Begin =— 
+*/
+var fld = [];
+for (var i = 0; i < 100; i++)
+  fld.push(0);
+
+var flot = [];
+//flot.push(createKorabl(4));
+flot.push(createKorabl(3));
+flot.push(createKorabl(3));
+flot.push(createKorabl(2));
+flot.push(createKorabl(2));
+flot.push(createKorabl(2));
+flot.push(createKorabl(1));
+flot.push(createKorabl(1));
+flot.push(createKorabl(1));
+flot.push(createKorabl(1));
+//alert("Zone:\n"+getField(fld)+"\n Flot:\n"+flot.join(' - ')); //var_dump
+
+/* —= START =—
+*/
+alert("Здравствуйте, мой флот вышел на позиции.");
+var win = false;
+while ((prompt("Будите стрелять? (1 - exit, иначе - да)") != 1) || win) {
+  var enter = false;
+  while (!enter) {
+    var c = prompt("Введите х и у (0-9 через пробел) Вашего выстрела:");
+    if (c != null) {
+      c = c.split(' ');
+      var x = parseInt(c[0]),
+        y = parseInt(c[1]);
+      if (isNaN(x) || isNaN(y)) {
+        enter = false;
+        alert("Не корректный ввод!!!   X и Y - это цыфры от 0 до 9.\n" +
+          "X - горизонтальная координата, Y - вертикальная. Отсчет ведется с левого верхнего угла." +
+          "Между значениями X и Y должен стоять пробел.\n" +
+          "Например: 3 4");
+
+      } else
+        enter = true;
+    } else
+      alert("Отмена? Надо стрелять.");
+  }
+  var str = "Ваш выстрел: x=" + x + "; y=" + y,
+    p = x + y * 10,
+    mishit = false,
+    hit = false;
+  for (var k = 0; k < flot.length; k++) {
+    // korabl
+    for (var i = 0; i < flot[k].length; i++) {
+      // paluba
+      if (p == flot[k][i]) {
+        flot[k].splice(i, 1);
+        if (flot[k].length === 0) {
+          flot.splice(k, 1);
+          alert(str + ".  Убил.");
+          hit = true;
+          mishit = false;
+          break;
+        } else {
+          alert(str + ".  Попал.");
+          hit = true;
+          mishit = false;
+          break;
+        }
+      } else {
+        hit = false;
+        mishit = true;
+      }
+    }
+    if (hit)
+      break;
+  }
+  if (mishit)
+    alert(str + ". Промах!!!");
+  if (flot.length === 0) {
+    alert("Вы выиграли.");
+    win = true;
+  }
+  //alert("Flot\n"+flot.join("\n")); //var_dump
+}
+
+</script>
+	</head>
+	<body>
+	</body>
+</html>
